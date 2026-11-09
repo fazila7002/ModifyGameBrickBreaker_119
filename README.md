@@ -1,5 +1,7 @@
 # ModifyGameBrickBreaker_119
 
+**BRICK BREAKER – ARCADE EDITION**
+
 Tugas Pemrograman Multiplatform – Topic 9: Implementasi OOP di GUI Programming
 
 - **Nama:** Fazilatun Nisa Muslimah
@@ -9,37 +11,57 @@ Tugas Pemrograman Multiplatform – Topic 9: Implementasi OOP di GUI Programming
 ## Cara menjalankan
 
 ```bash
+pip install pygame-ce      # opsional, untuk musik latar + efek suara
 python brick_breaker.py
 ```
 
-Butuh Python 3 dengan Tkinter (sudah bawaan Python di Windows).
+Tanpa `pygame-ce` game tetap jalan. Di Windows efek suara tetap bunyi lewat `winsound`, tapi tanpa musik latar.
 
 ## Kontrol
 
 | Tombol | Fungsi |
 |---|---|
 | Mouse / panah kiri-kanan | Gerakkan paddle |
-| Spasi | Mulai / main lagi setelah game over |
+| Spasi / klik | Mulai, lempar bola, main lagi |
 | P | Pause / lanjut |
+| M | Musik on / off |
 
 ## Daftar modifikasi
 
 | No | Modifikasi | Keterangan |
 |---|---|---|
-| 1 | Sistem skor | Bata 1 hit = 10, 2 hit = 20, 3 hit = 30 poin |
-| 2 | Level bertingkat | Semua bata habis → naik level, bonus 100 × level |
-| 3 | Tingkat kesulitan | Tiap level: baris bata bertambah, bata keras lebih banyak, bola lebih cepat |
-| 4 | High score | Skor tertinggi disimpan selama program jalan |
-| 5 | Pause | Tekan P untuk berhenti sementara |
-| 6 | Restart | Spasi setelah game over untuk main lagi tanpa menutup program |
-| 7 | Kontrol mouse | Paddle mengikuti posisi mouse |
-| 8 | Pantulan bersudut | Arah bola tergantung titik kena di paddle (pinggir = miring tajam) |
-| 9 | HUD baru | Nyawa berbentuk hati, skor, high score, dan level di bagian atas |
-| 10 | Tema gelap | Warna latar, paddle, dan bata diganti |
-| 11 | Perbaikan bug | Bola tidak lagi "nyangkut" di dinding, paddle tidak bisa keluar layar |
+| 1 | Tema neon arcade | Latar grid retro, bintang bergerak, warna neon, teks berbayang |
+| 2 | Title screen | Judul berganti warna pelangi, teks berkedip, high score, petunjuk kontrol |
+| 3 | Efek suara chiptune | Suara paddle, dinding, bata retak, bata pecah, power-up, nyawa hilang, level clear, game over |
+| 4 | Musik latar | Lagu chiptune 8 bar yang diputar berulang (bisa dimatikan dengan M) |
+| 5 | Partikel ledakan | Bata pecah menyebar jadi partikel sesuai warnanya + teks skor melayang |
+| 6 | Screen shake | Layar bergetar saat bata pecah dan saat nyawa hilang |
+| 7 | Jejak bola | Bola meninggalkan ekor seperti komet |
+| 8 | Combo | Pecahkan bata berturut-turut tanpa menyentuh paddle, skor dikali combo |
+| 9 | Power-up | `W` paddle lebar, `S` bola lambat, `+` nyawa tambahan |
+| 10 | 4 desain level + level acak | Tiap level punya pola bata berbeda, setelah level 4 dibuat acak dan makin sulit |
+| 11 | Bata 1–3 hit | Warna bata berubah tiap kali kena |
+| 12 | Kecepatan bertambah | Bola makin cepat tiap memantul dan tiap naik level |
+| 13 | Pantulan bersudut | Arah bola tergantung titik kena di paddle |
+| 14 | High score tersimpan | Disimpan di `highscore.json`, tidak hilang saat game ditutup |
+| 15 | Pause & musik on/off | Tombol P dan M |
+| 16 | Gerak paddle halus | Tahan tombol panah untuk gerak terus, atau pakai mouse |
 
-## Struktur OOP
+## Struktur file
 
-- `GameObject` – class induk (posisi, gerak, hapus)
-- `Ball`, `Paddle`, `Brick` – turunan `GameObject` (inheritance)
-- `Game` – turunan `tk.Frame`, mengatur level, skor, nyawa, dan game loop
+| File | Isi |
+|---|---|
+| `brick_breaker.py` | Class `Ball`, `Paddle`, `Brick`, dan `Game` (loop utama ~60 FPS) |
+| `game_object.py` | Class induk `GameObject` |
+| `powerups.py` | Class `PowerUp` (turunan `GameObject`) |
+| `effects.py` | Class `Starfield`, `Particles`, `Shake` |
+| `sound.py` | Class `Sound`, pembuat efek suara & musik chiptune |
+| `highscore.py` | Simpan / baca high score |
+| `settings.py` | Warna, ukuran, dan pola level |
+
+## Konsep OOP yang dipakai
+
+- **Inheritance:** `Ball`, `Paddle`, `Brick`, `PowerUp` mewarisi `GameObject`. `Game` mewarisi `tk.Frame`.
+- **Encapsulation:** tiap class mengurus datanya sendiri (misal `Brick.hit()` mengatur sisa hit dan warnanya).
+- **Polymorphism:** `Paddle.move()` meng-override `GameObject.move()` supaya paddle tidak keluar layar.
+- **Composition:** `Game` memakai objek `Sound`, `Starfield`, `Particles`, dan `Shake`.
